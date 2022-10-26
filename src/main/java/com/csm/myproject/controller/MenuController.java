@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,6 @@ import java.util.List;
  * @author csm
  * @since 2022-10-20
  */
-@Api("菜单管理")
 @RestController
 @RequestMapping("/myproject/menus")
 public class MenuController {
@@ -98,6 +98,7 @@ public class MenuController {
         return Response.error(AppExceptionCodeMsg.DELETE_ERR_MSG);
     }
 
+    @Operation(summary = "增加菜单")
     @PostMapping("")
     public Response<Boolean> insertMenu(@Parameter(description = "请传入一个需要增加的菜单")@RequestBody Menu menu) {
         if (menuService.insertMenu(menu) != null) {
@@ -106,8 +107,9 @@ public class MenuController {
         return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
     }
 
+    @Operation(summary = "修改菜单")
     @PutMapping("")
-    public Response<Boolean> updateMenu(@RequestBody Menu menu) {
+    public Response<Boolean> updateMenu(@Parameter(description = "请传入一个需要修改的菜单")@RequestBody Menu menu) {
         if (menuService.updateMenu(menu) != null) {
             return Response.success("修改菜单成功",true);
         }
