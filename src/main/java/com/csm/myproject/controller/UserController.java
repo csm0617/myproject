@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.User;
 import com.csm.myproject.entity.UserRole;
+import com.csm.myproject.exception.AppException;
+import com.csm.myproject.exception.AppExceptionCodeMsg;
 import com.csm.myproject.mapper.UserMapper;
 import com.csm.myproject.response.Response;
 import com.csm.myproject.service.IUserService;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -32,18 +35,19 @@ public class UserController {
     private IUserService userService;
     @Autowired
     private UserMapper userMap;
-    @GetMapping("/{pageNum}/{pageSize}")
-    public Response<Page<User>> getAllUser(@PathVariable Integer pageNum, @PathVariable Integer pageSize){
+    @GetMapping("/all")
+    public Response<Page<User>> getAllUser(@Parameter(description = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+                                           @Parameter(description = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize){
         Page<User> page = new Page(pageNum, pageSize);
         userMap.selectPage(page,null);
         return Response.ok(page);
     }
 
     @GetMapping
-    public Response<Page<User>> getUsersByInfo(@RequestParam(defaultValue = "1") Integer pageNum,
-                                     @RequestParam(defaultValue = "10") Integer pageSize,
-                                     @RequestParam String name,
-                                     @RequestParam String phone) {
+    public Response<Page<User>> getUsersByInfo(@Parameter(description = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+                                               @Parameter(description = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
+                                               @Parameter(description = "姓名")@RequestParam String name,
+                                               @Parameter(description = "手机号")@RequestParam String phone) {
         Page<User> page = new Page<>(pageNum,pageSize);
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(StringUtils.isNotEmpty(name),User::getUsername,name).
@@ -52,52 +56,51 @@ public class UserController {
         return Response.ok(userPage);
     }
     @GetMapping("/roles")
-    public Page<UserRole> getUserRole(@RequestParam Long userId,
-                                      @RequestParam(defaultValue = "1") Integer pageNum,
-                                      @RequestParam Integer pageSize
-                                      ){
+    public Response getUserRole(@Parameter(description = "第几页，默认为1")@RequestParam(defaultValue = "1") Integer pageNum,
+                                @Parameter(description = "每页显示的数量，默认为10")@RequestParam(defaultValue = "10") Integer pageSize,
+                                @Parameter(description = "用户id")@RequestParam Long userId){
 
         Page<UserRole> page = userService.getUserRoles(userId, pageNum, pageSize);
 
-        return page;
+        return Response.ok(page);
 
     }
 
     @Transactional(rollbackFor = Exception.class)
     @DeleteMapping("/{id}")
-    public void deleteUserById(@PathVariable Long id){
+    public Response<Boolean> deleteUserById(@Parameter(description = "用户id")@PathVariable Long id){
 
         try {
             userService.deleteUserRer(id);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new AppException(AppExceptionCodeMsg.DELETE_ERR_MSG);
         }
-
+        return Response.success("成功删除用户",true);
     }
 
     @PutMapping
-    public boolean updateUser(@RequestBody User user){
+    public Response<Boolean> updateUser(@RequestBody User user){
         if (userService.updateUser(user)!=null){
-            return true;
+            return Response.success("修改用户成功",true);
         }
-        return false;
+        return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
     @PostMapping(headers="content-type=multipart/form-data")
-    public boolean insertUser(@RequestPart("file") MultipartFile file,
-                              @RequestBody User user){
+    public Response<Boolean> insertUser(@Parameter(description = "上传用户头像")@RequestPart("file") MultipartFile file,
+                                        @RequestBody User user){
         if(userService.insertUser(file, user)!=null){
-            return true;
+            return Response.success("成功上传",true);
         }
-        return false;
+        return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
     }
 
     @PutMapping (value="/avatar",headers="content-type=multipart/form-data")
-    public boolean updateAvatar(@RequestPart("file") MultipartFile file,
-                                @RequestParam Long userId){
+    public Response<Boolean> updateAvatar(@Parameter(description = "上传需要修改的用户头像")@RequestPart("file") MultipartFile file,
+                                          @Parameter(description = "用户id") @RequestParam Long userId){
         if(userService.updateAvatar(file,userId)!=null){
-            return true;
+            return Response.success("成功修改用户头像",true);
         }
-            return false;
+            return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
     }
 
 }
