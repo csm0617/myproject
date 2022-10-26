@@ -11,10 +11,11 @@ import lombok.Data;
 public enum AppExceptionCodeMsg {
     //枚举类型
     NOT_FIND_MENU(10000,"没有找到菜单"),
-    INPUT_INVALID(10001,"请检查菜单类型是否有误"),
+    INPUT_INVALID(10001,"请检查输入类型是否有误"),
     DELETE_ERR_MSG(10002,"删除失败"),
     UPDATE_ERR_MSG(10003,"修改失败"),
-    UPLOAD_AVATAR_ERR_MSG(10004,"修改失败");
+    INSERT_ERR_MSG(10004,"新增失败"),
+    UPLOAD_AVATAR_ERR_MSG(10005,"修改失败");
 
     private int code ;
     private String message ;

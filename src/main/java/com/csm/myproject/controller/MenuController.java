@@ -1,4 +1,5 @@
 package com.csm.myproject.controller;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.Menu;
 import com.csm.myproject.exception.AppException;
@@ -11,9 +12,11 @@ import com.csm.myproject.service.IMenuService;
 import com.csm.myproject.vo.MenuItem;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,7 +25,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author csm
@@ -43,59 +46,72 @@ public class MenuController {
     @GetMapping("/list")
     @ApiOperation("展开菜单列表")
     public Response<Menu> showMenuList(@Parameter(description = "页码默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
-                             @Parameter(description = "每页显示数量默认的10") @RequestParam(defaultValue = "10") Integer pageSize,
-                             @Parameter(description = "菜单id")@RequestParam(required = false) Long menuId,
-                             @Parameter(description = "菜单的类型")@RequestParam Integer type
-                            ){
+                                       @Parameter(description = "每页显示数量默认的10") @RequestParam(defaultValue = "10") Integer pageSize,
+                                       @Parameter(description = "菜单id") @RequestParam(required = false) Long menuId,
+                                       @Parameter(description = "菜单的类型") @RequestParam Integer type
+    ) {
         //数据校验
-        if (!(type>=1&&type<=3)){
+        if (!(type >= 1 && type <= 3)) {
             throw new AppException(AppExceptionCodeMsg.INPUT_INVALID);
         }
-
-        if (type==1){
+        if (type == 1) {
             Page<Menu> page = menuService.showMenuList(pageNum, pageSize);
             return Response.ok(page);
         }
-        if (menuId!=null&&type==2){
+        if (menuId != null && type == 2) {
             Page<Menu> page = menuService.showFirMenuList(pageNum, pageSize, menuId);
             return Response.ok(page);
 
         }
-        if (menuId!=null&&type==3){
+        if (menuId != null && type == 3) {
             Page<Menu> page = menuService.showSecMenuList(pageNum, pageSize, menuId);
             return Response.ok(page);
         }
         return Response.error(AppExceptionCodeMsg.NOT_FIND_MENU);
     }
 
-
+    @Operation(summary = "通过角色id查找该角色的全部菜单")
     @GetMapping("/{roleId}")
-    public List<MenuItem> showRoleMenuList(@PathVariable Long roleId){
-
-        return menuService.showMenuListByRoleId(roleId);
+    public Response<List<MenuItem>> showRoleMenuList(@Parameter(description = "角色id")@PathVariable Long roleId) {
+        //数据格式校验
+        if (!(roleId instanceof Long)){
+            throw new AppException(1000,"输入的角色id类型有误");
+        }
+        List<MenuItem> menuItems = menuService.showMenuListByRoleId(roleId);
+        return Response.ok(menuItems);
     }
 
-    @DeleteMapping("/{menuId}/{type}")
-    public boolean deleteMenu(@PathVariable Long menuId,@PathVariable Integer type) throws Exception{
+    @Transactional
+    @Operation(summary = "通过菜单id和菜单类型来删除菜单")
+    @DeleteMapping("")
+    public Response<Boolean> deleteMenu(@Parameter(description = "需要删除菜单的id")@RequestParam Long menuId,
+                                        @Parameter(description = "需要删除菜单的类型")@RequestParam Integer type)
+            throws Exception {
         try {
-            return menuService.deleteMenuById(menuId, type);
+            if (menuService.deleteMenuById(menuId, type)){
+                return Response.success("删除菜单成功",true);
+            }
+
         } catch (Exception e) {
             throw new Exception(e);
         }
+        return Response.error(AppExceptionCodeMsg.DELETE_ERR_MSG);
     }
+
     @PostMapping("")
-    public Boolean insertMenu(@RequestBody Menu menu) {
+    public Response<Boolean> insertMenu(@Parameter(description = "请传入一个需要增加的菜单")@RequestBody Menu menu) {
         if (menuService.insertMenu(menu) != null) {
-            return true;
+            return Response.success("插入菜单成功",true);
         }
-        return false;
+        return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
     }
+
     @PutMapping("")
-    public Boolean updateMenu(@RequestBody Menu menu) {
-         if (menuService.updateMenu(menu)!=null){
-             return true;
-         }
-         return false;
+    public Response<Boolean> updateMenu(@RequestBody Menu menu) {
+        if (menuService.updateMenu(menu) != null) {
+            return Response.success("修改菜单成功",true);
+        }
+        return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
 
 }

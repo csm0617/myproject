@@ -8,6 +8,8 @@ import com.csm.myproject.mapper.*;
 import com.csm.myproject.service.IMenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.csm.myproject.vo.MenuItem;
+import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithmState;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -135,7 +137,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     public boolean deleteMenuById(Long menuId, Integer type) {
         //删除一级菜单
         if (menuId != null && type == 1) {
-
                 //先删除一级菜单和角色表的关联
                 roleMenuMapper.delete(new LambdaQueryWrapper<RoleMenu>()
                         .eq(RoleMenu::getMenuId, menuId));
@@ -174,23 +175,25 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         if (menu.getMenuType() == 2){
             FirMenu firMenu = new FirMenu();
             firMenu.setMenuType(2);
+            BeanUtils.copyProperties(menu,firMenu);
             //赋值id可能会失败
             //设置id自增；
             // firMenu.setId(menu.getId());
-            firMenu.setName(menu.getName());
-            firMenu.setInfo(menu.getInfo());
-            firMenu.setCreatTime(menu.getCreatTime());
-            firMenu.setUpdateTime(menu.getUpdataTime());
+//            firMenu.setName(menu.getName());
+//            firMenu.setInfo(menu.getInfo());
+//            firMenu.setCreatTime(menu.getCreatTime());
+//            firMenu.setUpdateTime(menu.getUpdataTime());
             firMenuMapper.insert(firMenu);
             return menu;
         }
         if (menu.getMenuType()==3){
             SecMenu secMenu = new SecMenu();
+            BeanUtils.copyProperties(menu,secMenu);
             secMenu.setMenuType(3);
-            secMenu.setName(menu.getName());
-            secMenu.setInfo(menu.getInfo());
-            secMenu.setCreatTime(menu.getCreatTime());
-            secMenu.setUpdateTime(menu.getCreatTime());
+//            secMenu.setName(menu.getName());
+//            secMenu.setInfo(menu.getInfo());
+//            secMenu.setCreatTime(menu.getCreatTime());
+//            secMenu.setUpdateTime(menu.getCreatTime());
             secMenuMapper.insert(secMenu);
             return menu;
         }
@@ -202,7 +205,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         if (menu.getMenuType()==1){
             Menu menu1 = menuMapper.selectById(menu.getId());
             if (menu1 != null) {
-                int update = menuMapper.update(menu, new LambdaQueryWrapper<Menu>().eq(menu.getId() != null, Menu::getId, menu.getId()));
+                int update = menuMapper.update(menu, new LambdaQueryWrapper<Menu>()
+                        .eq(menu.getId() != null, Menu::getId, menu.getId()));
                 if (update > 0) {
                     return menu;
                 }
@@ -212,10 +216,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         if (menu.getMenuType()==1) {
             FirMenu firMenu = firMenuMapper.selectById(menu.getId());
             if (firMenu != null) {
-                firMenu.setName(menu.getName());
-                firMenu.setInfo(menu.getInfo());
-                firMenu.setCreatTime(menu.getCreatTime());
-                firMenu.setUpdateTime(menu.getUpdataTime());
+                //使用 beanutils工具复制同一种结构
+                BeanUtils.copyProperties(menu, firMenu);
+//                firMenu.setName(menu.getName());
+//                firMenu.setInfo(menu.getInfo());
+//                firMenu.setCreatTime(menu.getCreatTime());
+//                firMenu.setUpdateTime(menu.getUpdataTime());
                 int update = firMenuMapper.update(firMenu, new LambdaQueryWrapper<FirMenu>()
                         .eq(menu.getId() != null, FirMenu::getId, menu.getId()));
                 if (update > 0) {
@@ -226,10 +232,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         if (menu.getMenuType()==3) {
             SecMenu secMenu = secMenuMapper.selectById(menu.getId());
             if (secMenu != null) {
-                secMenu.setName(menu.getName());
-                secMenu.setInfo(menu.getInfo());
-                secMenu.setCreatTime(menu.getCreatTime());
-                secMenu.setUpdateTime(menu.getUpdataTime());
+                BeanUtils.copyProperties(menu,secMenu);
+//                secMenu.setName(menu.getName());
+//                secMenu.setInfo(menu.getInfo());
+//                secMenu.setCreatTime(menu.getCreatTime());
+//                secMenu.setUpdateTime(menu.getUpdataTime());
                 int update = secMenuMapper.update(secMenu, new LambdaQueryWrapper<SecMenu>()
                         .eq(menu.getId() != null, SecMenu::getId, menu.getId()));
                 if (update > 0) {
