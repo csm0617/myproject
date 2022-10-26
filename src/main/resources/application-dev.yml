@@ -1,4 +1,5 @@
 spring:
+  #解决swagger在springboot 2.6版本以上会出现兼容性问题
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

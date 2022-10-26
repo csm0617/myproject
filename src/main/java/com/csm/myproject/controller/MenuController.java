@@ -1,12 +1,18 @@
 package com.csm.myproject.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.Menu;
+import com.csm.myproject.exception.AppException;
+import com.csm.myproject.exception.AppExceptionCodeMsg;
 import com.csm.myproject.mapper.FirMenuMapper;
 import com.csm.myproject.mapper.MenuMapper;
+import com.csm.myproject.response.Response;
+import com.csm.myproject.service.IFirMenuService;
 import com.csm.myproject.service.IMenuService;
 import com.csm.myproject.vo.MenuItem;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,25 +42,30 @@ public class MenuController {
 
     @GetMapping("/list")
     @ApiOperation("展开菜单列表")
-    public Page showMenuList(@RequestParam Integer pageNum,
-                             @RequestParam Integer pageSize,
-                             @RequestParam Long menuId,
-                             @RequestParam Integer type
+    public Response<Menu> showMenuList(@Parameter(description = "页码默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+                             @Parameter(description = "每页显示数量默认的10") @RequestParam(defaultValue = "10") Integer pageSize,
+                             @Parameter(description = "菜单id")@RequestParam(required = false) Long menuId,
+                             @Parameter(description = "菜单的类型")@RequestParam Integer type
                             ){
+        //数据校验
+        if (!(type>=1&&type<=3)){
+            throw new AppException(AppExceptionCodeMsg.INPUT_INVALID);
+        }
+
         if (type==1){
-            Page page = menuService.showMenuList(pageNum, pageSize);
-            return page;
+            Page<Menu> page = menuService.showMenuList(pageNum, pageSize);
+            return Response.ok(page);
         }
         if (menuId!=null&&type==2){
-            Page page = menuService.showFirMenuList(pageNum, pageSize, menuId);
-            return page;
+            Page<Menu> page = menuService.showFirMenuList(pageNum, pageSize, menuId);
+            return Response.ok(page);
 
         }
         if (menuId!=null&&type==3){
-            Page page = menuService.showSecMenuList(pageNum, pageSize, menuId);
-            return page;
+            Page<Menu> page = menuService.showSecMenuList(pageNum, pageSize, menuId);
+            return Response.ok(page);
         }
-        return null;
+        return Response.error(AppExceptionCodeMsg.NOT_FIND_MENU);
     }
 
 

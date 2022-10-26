@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.User;
 import com.csm.myproject.entity.UserRole;
 import com.csm.myproject.mapper.UserMapper;
+import com.csm.myproject.response.Response;
 import com.csm.myproject.service.IUserService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,15 @@ public class UserController {
     @Autowired
     private UserMapper userMap;
     @GetMapping("/{pageNum}/{pageSize}")
-    public Page getAllUser(@PathVariable Integer pageNum, @PathVariable Integer pageSize){
-        Page page = new Page(pageNum, pageSize);
+    public Response<Page<User>> getAllUser(@PathVariable Integer pageNum, @PathVariable Integer pageSize){
+        Page<User> page = new Page(pageNum, pageSize);
         userMap.selectPage(page,null);
-        return page;
+        return Response.ok(page);
     }
 
     @GetMapping
-    public Page<User> getUsersByInfo(@RequestParam Integer pageNum,
-                                     @RequestParam Integer pageSize,
+    public Response<Page<User>> getUsersByInfo(@RequestParam(defaultValue = "1") Integer pageNum,
+                                     @RequestParam(defaultValue = "10") Integer pageSize,
                                      @RequestParam String name,
                                      @RequestParam String phone) {
         Page<User> page = new Page<>(pageNum,pageSize);
@@ -48,11 +49,11 @@ public class UserController {
         queryWrapper.eq(StringUtils.isNotEmpty(name),User::getUsername,name).
                 like(StringUtils.isNotEmpty(phone),User::getPhone,phone);
         Page<User> userPage = userMap.selectPage(page, queryWrapper);
-        return userPage;
+        return Response.ok(userPage);
     }
     @GetMapping("/roles")
     public Page<UserRole> getUserRole(@RequestParam Long userId,
-                                      @RequestParam Integer pageNum,
+                                      @RequestParam(defaultValue = "1") Integer pageNum,
                                       @RequestParam Integer pageSize
                                       ){
 
