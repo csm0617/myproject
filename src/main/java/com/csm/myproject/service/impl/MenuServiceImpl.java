@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.*;
 import com.csm.myproject.mapper.*;
+import com.csm.myproject.result.menu.MenuData;
 import com.csm.myproject.service.IMenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.csm.myproject.vo.MenuItem;
@@ -98,6 +99,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             for (Menu menu : menus) {
                 MenuItem m1 = new MenuItem();
                 m1.setName(menu.getName());
+                m1.setInfo(menu.getInfo());
                 m1.setType(1);
                 result.add(m1);
                 List<MenuItem> m2List = new ArrayList<>();
@@ -112,6 +114,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
                     MenuItem m2 = new MenuItem();
                     m2.setName(firMenu.getName());
                     m2.setType(2);
+                    m2.setInfo(menu.getInfo());
                     List<MenuItem> m3List = new ArrayList<>();
                     m2List.add(m2);
 
@@ -124,6 +127,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
                         MenuItem m3 = new MenuItem();
                         m3.setName(secMenu.getName());
                         m3.setType(3);
+                        m3.setInfo(menu.getInfo());
                         m3List.add(m3);
                     }
                     m2.setSub(m3List);
@@ -249,14 +253,22 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     }
 
     @Override
-    public Page showMenuList(Integer pageNum,Integer pageSize) {
-        Page page = new Page(pageNum, pageSize);
-        menuMapper.selectPage(page, new QueryWrapper<Menu>(null));
+    public Page<MenuData> showMenuList(Integer pageNum,Integer pageSize) {
+        Page<MenuData> page = new Page(pageNum, pageSize);
+        List<Menu> menus = menuMapper.selectList(null);
+        List<MenuData> menuDataList = new ArrayList<>();
+        for (Menu menu : menus) {
+            MenuData menuData = new MenuData();
+            BeanUtils.copyProperties(menu, menuData);
+            menuDataList.add(menuData);
+        }
+        page.setRecords(menuDataList);
+        page.setTotal(menuDataList.size());
         return page;
     }
 
     @Override
-    public Page showFirMenuList(Integer pageNum, Integer pageSize, Long menuId) {
+    public Page<MenuData> showFirMenuList(Integer pageNum, Integer pageSize, Long menuId) {
         List<MenuFirmenu> menuFirMenus = menuFirmenuMapper.selectList(new LambdaQueryWrapper<MenuFirmenu>()
                 .eq(menuId != null, MenuFirmenu::getMenuId, menuId));
         if (!menuFirMenus.isEmpty()) { // null empty
@@ -265,30 +277,42 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
                 Long firMenuId = menuFirmenu.getFirmenuId();
                 firMenuIds.add(firMenuId);
             }
-            Page page = new Page<FirMenu>(pageNum, pageSize);
+            Page<MenuData> page = new Page<>(pageNum, pageSize);
             List<FirMenu> firMenus = firMenuMapper.selectBatchIds(firMenuIds);
-            page.setRecords(firMenus);
-            page.setPages(firMenus.size());
+            List<MenuData> menuDataList = new ArrayList<>();
+            for (FirMenu firMenu : firMenus) {
+                MenuData menuData = new MenuData();
+                BeanUtils.copyProperties(firMenu,menuData);
+                menuDataList.add(menuData);
+            }
+            page.setRecords(menuDataList);
+            page.setTotal(menuDataList.size());
             return page;
         }
         return null;
     }
 
     @Override
-    public Page showSecMenuList(Integer pageNum, Integer pageSize, Long firMenuId) {
+    public Page<MenuData> showSecMenuList(Integer pageNum, Integer pageSize, Long firMenuId) {
         List<FirmenuSecmenu> firmenuSecmenus = firmenuSecmenuMapper.selectList(
                 new LambdaQueryWrapper<FirmenuSecmenu>().
                         eq(firMenuId != null, FirmenuSecmenu::getFirmenuId , firMenuId));
         if (firmenuSecmenus!=null) {
-            Page page = new Page(pageNum, pageSize);
+            Page<MenuData> page = new Page(pageNum, pageSize);
             ArrayList<Long> secMenuIds = new ArrayList<>();
             for (FirmenuSecmenu firmenuSecmenu : firmenuSecmenus) {
                 Long secMenuId = firmenuSecmenu.getSecmenuId();
                 secMenuIds.add(secMenuId);
             }
             List<SecMenu> secMenus = secMenuMapper.selectBatchIds(secMenuIds);
-            page.setRecords(secMenus);
-            page.setTotal(secMenus.size());
+            List<MenuData> menuDataList = new ArrayList<>();
+            for (SecMenu secMenu : secMenus) {
+                MenuData menuData = new MenuData();
+                BeanUtils.copyProperties(secMenu,menuData);
+                menuDataList.add(menuData);
+            }
+            page.setRecords(menuDataList);
+            page.setTotal(menuDataList.size());
             return page;
         }
         return null;

@@ -60,7 +60,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Page<Role> getUserRoles(long userId,Integer pageNum,Integer pageSize) {
-        Page<Role> page = new Page<>(pageNum,pageSize);
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserRole ::getUserId,userId);
         List<UserRole> userRoles = userRoleMapper.selectList(queryWrapper);
@@ -70,9 +69,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             roleIds.add(roleId);
         }
         List<Role> roles = roleMapper.selectBatchIds(roleIds);
+        Page<Role> page = new Page<>(pageNum,pageSize);
         page.setRecords(roles);
-        page.setCurrent(pageNum);
-        page.setPages(pageSize);
 
         return page;
     }
@@ -96,9 +94,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             try {
 
                 String firStr = encoder.encode(file.getBytes());
-                user.setAvaxtar(firStr);
+                user.setAvatar(firStr);
                 String path = "F\\:" + user.getUsername() + System.currentTimeMillis() + ".png";
-                Base64Util.GenerateImage(user.getAvaxtar(), path);
+                Base64Util.GenerateImage(user.getAvatar(), path);
                 File avatarFile = new File(path);
                 if (userMapper.insert(user)>0) {
                     return user;
@@ -118,10 +116,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
             try {
                 String firStr = encoder.encode(file.getBytes());
-                user.setAvaxtar(firStr);
+                user.setAvatar(firStr);
 
                 String path = "F\\:" + user.getUsername() + System.currentTimeMillis() + ".png";
-                Base64Util.GenerateImage(user.getAvaxtar(), path);
+                Base64Util.GenerateImage(user.getAvatar(), path);
                 File avatarFile = new File(path);
                 if (userMapper.update(user,new LambdaQueryWrapper<User>().eq(userId!=null,User::getId,userId))>0) {
                     return user;

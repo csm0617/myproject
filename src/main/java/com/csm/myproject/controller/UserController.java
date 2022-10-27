@@ -1,24 +1,26 @@
 package com.csm.myproject.controller;
-
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.Role;
 import com.csm.myproject.entity.User;
-import com.csm.myproject.entity.UserRole;
 import com.csm.myproject.exception.AppException;
 import com.csm.myproject.exception.AppExceptionCodeMsg;
 import com.csm.myproject.mapper.UserMapper;
 import com.csm.myproject.response.Response;
+import com.csm.myproject.result.user.UserData;
 import com.csm.myproject.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -39,10 +41,17 @@ public class UserController {
 
     @ApiOperation(value = "获取所有的用户并分页展示")
     @GetMapping("/all")
-    public Response<Page<User>> getAllUser(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
-                                           @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize) {
-        Page<User> page = new Page(pageNum, pageSize);
-        userMap.selectPage(page, null);
+    public Response<Page<UserData>> getAllUser(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+                                               @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize) {
+        Page<UserData> page = new Page(pageNum, pageSize);
+        List<User> users = userMap.selectList(null);
+        List<UserData> userDataList = new ArrayList<>();
+        for (User user : users) {
+            UserData userData = new UserData();
+            BeanUtils.copyProperties(user,userData);
+            userDataList.add(userData);
+        }
+        page.setRecords(userDataList);
         return Response.ok(page);
     }
 
@@ -63,7 +72,7 @@ public class UserController {
 
     @ApiOperation(value = "通过用户id来查询该用户的角色")
     @GetMapping("/roles")
-    public Response<Page<UserRole>> getUserRole(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+    public Response<Page<Role>> getUserRole(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
                                                 @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
                                                 @ApiParam(value = "用户id") @RequestParam Long userId) {
 

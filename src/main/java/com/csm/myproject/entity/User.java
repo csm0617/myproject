@@ -45,7 +45,7 @@ public class User implements Serializable {
     private String phone;
 
     @ApiModelProperty("头像")
-    private String avaxtar;
+    private String avatar;
 
     @ApiModelProperty("登录token")
     private String apiToken;
@@ -102,12 +102,12 @@ public class User implements Serializable {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public String getAvaxtar() {
-        return avaxtar;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setAvaxtar(String avaxtar) {
-        this.avaxtar = avaxtar;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
     public String getApiToken() {
         return apiToken;
@@ -134,7 +134,7 @@ public class User implements Serializable {
             ", birth=" + birth +
             ", email=" + email +
             ", phone=" + phone +
-            ", avaxtar=" + avaxtar +
+            ", avatar=" + avatar +
             ", apiToken=" + apiToken +
             ", logicDelete=" + logicDelete +
         "}";

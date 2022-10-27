@@ -17,5 +17,6 @@ import java.util.List;
 public class MenuItem {
     private String name;
     private int type;
+    private  String info;
     private List<MenuItem> sub;
 }

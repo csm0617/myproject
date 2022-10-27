@@ -35,7 +35,7 @@ public class Menu implements Serializable {
     private Long creatTime;
 
     @ApiModelProperty("更新时间")
-    private Long updataTime;
+    private Long updateTime;
 
     @ApiModelProperty("信息")
     private String info;
@@ -71,12 +71,12 @@ public class Menu implements Serializable {
     public void setCreatTime(Long creatTime) {
         this.creatTime = creatTime;
     }
-    public Long getUpdataTime() {
-        return updataTime;
+    public Long getUpdateTime() {
+        return updateTime;
     }
 
-    public void setUpdataTime(Long updataTime) {
-        this.updataTime = updataTime;
+    public void setUpdateTime(Long updateTime) {
+        this.updateTime = updateTime;
     }
     public String getInfo() {
         return info;
@@ -100,7 +100,7 @@ public class Menu implements Serializable {
             ", name=" + name +
             ", menuType=" + menuType +
             ", creatTime=" + creatTime +
-            ", updataTime=" + updataTime +
+            ", updateTime=" + updateTime +
             ", info=" + info +
             ", logicDelete=" + logicDelete +
         "}";
