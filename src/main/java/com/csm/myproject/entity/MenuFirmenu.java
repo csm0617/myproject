@@ -1,8 +1,11 @@
 package com.csm.myproject.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -10,30 +13,26 @@ import java.io.Serializable;
  * </p>
  *
  * @author csm
- * @since 2022-10-20
+ * @since 2022-10-27
  */
 @TableName("m_menu_firmenu")
+@ApiModel(value = "MenuFirmenu对象", description = "")
 public class MenuFirmenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @ApiModelProperty("一级菜单id")
     private Long menuId;
 
+    @ApiModelProperty("二级菜单id")
     private Long firmenuId;
 
-    @TableLogic
+    @ApiModelProperty("逻辑删除")
     private Integer logicDelete;
-
-    public Integer getLogicDelete() {
-        return logicDelete;
-    }
-
-
-    public void setLogicDelete(Integer logicDelete) {
-        this.logicDelete = logicDelete;
-    }
 
     public Long getId() {
         return id;
@@ -56,14 +55,21 @@ public class MenuFirmenu implements Serializable {
     public void setFirmenuId(Long firmenuId) {
         this.firmenuId = firmenuId;
     }
+    public Integer getLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(Integer logicDelete) {
+        this.logicDelete = logicDelete;
+    }
 
     @Override
     public String toString() {
         return "MenuFirmenu{" +
-                "id=" + id +
-                ", menuId=" + menuId +
-                ", firmenuId=" + firmenuId +
-                ", logicDelete=" + logicDelete +
-                '}';
+            "id=" + id +
+            ", menuId=" + menuId +
+            ", firmenuId=" + firmenuId +
+            ", logicDelete=" + logicDelete +
+        "}";
     }
 }

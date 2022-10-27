@@ -1,13 +1,11 @@
 package com.csm.myproject.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -15,38 +13,35 @@ import java.io.Serializable;
  * </p>
  *
  * @author csm
- * @since 2022-10-20
+ * @since 2022-10-27
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 @TableName("m_menu")
+@ApiModel(value = "Menu对象", description = "")
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @ApiModelProperty("名字")
     private String name;
 
+    @ApiModelProperty("菜单类型")
     private Integer menuType;
 
+    @ApiModelProperty("创建时间")
     private Long creatTime;
 
+    @ApiModelProperty("更新时间")
     private Long updataTime;
 
+    @ApiModelProperty("信息")
     private String info;
 
-    @TableLogic
+    @ApiModelProperty("逻辑删除")
     private Integer logicDelete;
-
-    public Integer getLogicDelete() {
-        return logicDelete;
-    }
-
-    public void setLogicDelete(Integer logicDelete) {
-        this.logicDelete = logicDelete;
-    }
 
     public Long getId() {
         return id;
@@ -90,17 +85,24 @@ public class Menu implements Serializable {
     public void setInfo(String info) {
         this.info = info;
     }
+    public Integer getLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(Integer logicDelete) {
+        this.logicDelete = logicDelete;
+    }
 
     @Override
     public String toString() {
         return "Menu{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", menuType=" + menuType +
-                ", creatTime=" + creatTime +
-                ", updataTime=" + updataTime +
-                ", info='" + info + '\'' +
-                ", logicDelete=" + logicDelete +
-                '}';
+            "id=" + id +
+            ", name=" + name +
+            ", menuType=" + menuType +
+            ", creatTime=" + creatTime +
+            ", updataTime=" + updataTime +
+            ", info=" + info +
+            ", logicDelete=" + logicDelete +
+        "}";
     }
 }

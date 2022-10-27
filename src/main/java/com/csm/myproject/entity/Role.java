@@ -1,8 +1,11 @@
 package com.csm.myproject.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -10,51 +13,35 @@ import java.io.Serializable;
  * </p>
  *
  * @author csm
- * @since 2022-10-20
+ * @since 2022-10-27
  */
 @TableName("m_role")
+@ApiModel(value = "Role对象", description = "角色表")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 角色id
-     */
+    @ApiModelProperty("角色id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 角色标识符
-     */
+    @ApiModelProperty("角色标识符")
     private String info;
 
-    /**
-     * 角色名称
-     */
+    @ApiModelProperty("角色名称")
     private String name;
 
-    /**
-     * 角色类型
-     */
+    @ApiModelProperty("角色类型")
     private Integer roleType;
 
+    @ApiModelProperty("更新时间")
     private Long updateTime;
 
+    @ApiModelProperty("创建时间")
     private Long creatTime;
-    @TableLogic
 
+    @ApiModelProperty("逻辑删除")
     private Integer logicDelete;
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public Integer getLogicDelete() {
-        return logicDelete;
-    }
-
-    public void setLogicDelete(Integer logicDelete) {
-        this.logicDelete = logicDelete;
-    }
 
     public Long getId() {
         return id;
@@ -67,7 +54,7 @@ public class Role implements Serializable {
         return info;
     }
 
-    public void info(String info) {
+    public void setInfo(String info) {
         this.info = info;
     }
     public String getName() {
@@ -98,17 +85,24 @@ public class Role implements Serializable {
     public void setCreatTime(Long creatTime) {
         this.creatTime = creatTime;
     }
+    public Integer getLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(Integer logicDelete) {
+        this.logicDelete = logicDelete;
+    }
 
     @Override
     public String toString() {
         return "Role{" +
-                "id=" + id +
-                ", info='" + info + '\'' +
-                ", name='" + name + '\'' +
-                ", roleType=" + roleType +
-                ", updateTime=" + updateTime +
-                ", creatTime=" + creatTime +
-                ", logicDelete=" + logicDelete +
-                '}';
+            "id=" + id +
+            ", info=" + info +
+            ", name=" + name +
+            ", roleType=" + roleType +
+            ", updateTime=" + updateTime +
+            ", creatTime=" + creatTime +
+            ", logicDelete=" + logicDelete +
+        "}";
     }
 }

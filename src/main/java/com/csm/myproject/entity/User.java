@@ -1,9 +1,12 @@
 package com.csm.myproject.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDate;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -11,49 +14,44 @@ import java.time.LocalDate;
  * </p>
  *
  * @author csm
- * @since 2022-10-20
+ * @since 2022-10-27
  */
 @TableName("m_user")
+@ApiModel(value = "User对象", description = "")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty("用户id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty("用户名")
     private String username;
 
-    /**
-     * 密码
-     */
+    @ApiModelProperty("密码")
     private String pwd;
 
+    @ApiModelProperty("状态")
     private Integer status;
 
+    @ApiModelProperty("生日")
     private LocalDate birth;
 
+    @ApiModelProperty("邮箱")
     private String email;
 
+    @ApiModelProperty("手机号")
     private String phone;
 
+    @ApiModelProperty("头像")
     private String avaxtar;
 
+    @ApiModelProperty("登录token")
     private String apiToken;
-    @TableLogic
+
+    @ApiModelProperty("逻辑删除")
     private Integer logicDelete;
-
-    public Integer getLogicDelete() {
-        return logicDelete;
-    }
-
-    public void setLogicDelete(Integer logicDelete) {
-        this.logicDelete = logicDelete;
-    }
 
     public Long getId() {
         return id;
@@ -118,20 +116,27 @@ public class User implements Serializable {
     public void setApiToken(String apiToken) {
         this.apiToken = apiToken;
     }
+    public Integer getLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(Integer logicDelete) {
+        this.logicDelete = logicDelete;
+    }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", pwd='" + pwd + '\'' +
-                ", status=" + status +
-                ", birth=" + birth +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", avaxtar='" + avaxtar + '\'' +
-                ", apiToken='" + apiToken + '\'' +
-                ", logicDelete=" + logicDelete +
-                '}';
+            "id=" + id +
+            ", username=" + username +
+            ", pwd=" + pwd +
+            ", status=" + status +
+            ", birth=" + birth +
+            ", email=" + email +
+            ", phone=" + phone +
+            ", avaxtar=" + avaxtar +
+            ", apiToken=" + apiToken +
+            ", logicDelete=" + logicDelete +
+        "}";
     }
 }

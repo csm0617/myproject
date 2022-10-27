@@ -1,49 +1,47 @@
 package com.csm.myproject.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author csm
- * @since 2022-10-20
+ * @since 2022-10-27
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 @TableName("m_fir_menu")
+@ApiModel(value = "FirMenu对象", description = "")
 public class FirMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @ApiModelProperty("菜单类型")
     private Integer menuType;
 
+    @ApiModelProperty("创建时间")
     private Long creatTime;
 
+    @ApiModelProperty("修改时间")
     private Long updateTime;
 
+    @ApiModelProperty("名字")
     private String name;
+
+    @ApiModelProperty("信息")
     private String info;
-    @TableLogic
+
+    @ApiModelProperty("逻辑删除")
     private Integer logicDelete;
-
-    public Integer getLogicDelete() {
-        return logicDelete;
-    }
-
-    public void setLogicDelete(Integer logicDelete) {
-        this.logicDelete = logicDelete;
-    }
 
     public Long getId() {
         return id;
@@ -52,7 +50,6 @@ public class FirMenu implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
     public Integer getMenuType() {
         return menuType;
     }
@@ -60,7 +57,6 @@ public class FirMenu implements Serializable {
     public void setMenuType(Integer menuType) {
         this.menuType = menuType;
     }
-
     public Long getCreatTime() {
         return creatTime;
     }
@@ -68,7 +64,6 @@ public class FirMenu implements Serializable {
     public void setCreatTime(Long creatTime) {
         this.creatTime = creatTime;
     }
-
     public Long getUpdateTime() {
         return updateTime;
     }
@@ -76,7 +71,6 @@ public class FirMenu implements Serializable {
     public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
     }
-
     public String getName() {
         return name;
     }
@@ -84,7 +78,6 @@ public class FirMenu implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
     public String getInfo() {
         return info;
     }
@@ -92,17 +85,24 @@ public class FirMenu implements Serializable {
     public void setInfo(String info) {
         this.info = info;
     }
+    public Integer getLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(Integer logicDelete) {
+        this.logicDelete = logicDelete;
+    }
 
     @Override
     public String toString() {
         return "FirMenu{" +
-                "id=" + id +
-                ", menuType=" + menuType +
-                ", creatTime=" + creatTime +
-                ", updateTime=" + updateTime +
-                ", name='" + name + '\'' +
-                ", info='" + info + '\'' +
-                ", logicDelete=" + logicDelete +
-                '}';
+            "id=" + id +
+            ", menuType=" + menuType +
+            ", creatTime=" + creatTime +
+            ", updateTime=" + updateTime +
+            ", name=" + name +
+            ", info=" + info +
+            ", logicDelete=" + logicDelete +
+        "}";
     }
 }
