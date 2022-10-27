@@ -12,6 +12,7 @@ import com.csm.myproject.mapper.UserMapper;
 import com.csm.myproject.response.Response;
 import com.csm.myproject.service.IUserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ public class UserController {
     @Autowired
     private UserMapper userMap;
 
-    @ApiParam(value = "获取所有的用户并分页展示")
+    @ApiOperation(value = "获取所有的用户并分页展示")
     @GetMapping("/all")
     public Response<Page<User>> getAllUser(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
                                            @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -44,7 +45,7 @@ public class UserController {
         return Response.ok(page);
     }
 
-    @ApiParam(value = "通过用户信息来查询用户")
+    @ApiOperation(value = "通过用户信息来查询用户")
     @GetMapping
     public Response<Page<User>> getUsersByInfo(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
                                                @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
@@ -59,7 +60,7 @@ public class UserController {
     }
 
 
-    @ApiParam(value = "通过用户id来查询该用户的角色")
+    @ApiOperation(value = "通过用户id来查询该用户的角色")
     @GetMapping("/roles")
     public Response<Page<UserRole>> getUserRole(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
                                                 @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
@@ -71,7 +72,7 @@ public class UserController {
 
     }
 
-    @ApiParam(value = "通过用户id来删除用户")
+    @ApiOperation(value = "通过用户id来删除用户")
     @Transactional(rollbackFor = Exception.class)
     @DeleteMapping("/{id}")
     public Response<Boolean> deleteUserById(@ApiParam(value = "用户id") @PathVariable Long id) {
@@ -84,7 +85,7 @@ public class UserController {
         return Response.success("成功删除用户", true);
     }
 
-    @ApiParam(value = "修改用户信息")
+    @ApiOperation(value = "修改用户信息")
     @PutMapping
     public Response<Boolean> updateUser(@ApiParam(value = "请传入用户信息") @RequestBody User user) {
         if (userService.updateUser(user) != null) {
@@ -93,7 +94,7 @@ public class UserController {
         return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
 
-    @ApiParam(value = "新增用户")
+    @ApiOperation(value = "新增用户")
     @PostMapping(headers = "content-type=multipart/form-data")
     public Response<Boolean> insertUser(@ApiParam(value = "上传用户头像") @RequestPart("file") MultipartFile file,
                                         @ApiParam(value = "传入用户信息") @RequestBody() User user) {
@@ -103,7 +104,7 @@ public class UserController {
         return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
     }
 
-    @ApiParam(value = "通过用户id来修改用户头像")
+    @ApiOperation(value = "通过用户id来修改用户头像")
     @PutMapping(value = "/avatar", headers = "content-type=multipart/form-data")
     public Response<Boolean> updateAvatar(@ApiParam(value = "上传需要修改的用户头像") @RequestPart("file") MultipartFile file,
                                           @ApiParam(value = "用户id") @RequestParam Long userId) {

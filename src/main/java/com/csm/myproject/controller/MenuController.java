@@ -10,6 +10,7 @@ import com.csm.myproject.response.Response;
 import com.csm.myproject.service.IMenuService;
 import com.csm.myproject.vo.MenuItem;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class MenuController {
 
 
     @GetMapping("/list")
-    @ApiParam(value = "展开菜单列表")
+    @ApiOperation(value = "展开菜单列表")
     public Response<Menu> showMenuList(@ApiParam(value = "页码默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
                                        @ApiParam(value = "每页显示数量默认的10") @RequestParam(defaultValue = "10") Integer pageSize,
                                        @ApiParam(value = "菜单id") @RequestParam(required = false) Long menuId,
@@ -62,7 +63,7 @@ public class MenuController {
         return Response.error(AppExceptionCodeMsg.NOT_FIND_MENU);
     }
 
-    @ApiParam(value = "通过角色id查找该角色的全部菜单")
+    @ApiOperation(value = "通过角色id查找该角色的全部菜单")
     @GetMapping("/{roleId}")
     public Response<List<MenuItem>> showRoleMenuList(@ApiParam(value = "角色id") @PathVariable Long roleId) {
         //数据格式校验
@@ -74,7 +75,7 @@ public class MenuController {
     }
 
     @Transactional
-    @ApiParam(value = "通过菜单id和菜单类型来删除菜单")
+    @ApiOperation(value = "通过菜单id和菜单类型来删除菜单")
     @DeleteMapping("")
     public Response<Boolean> deleteMenu(@ApiParam(value = "需要删除菜单的id") @RequestParam Long menuId,
                                         @ApiParam(value = "需要删除菜单的类型") @RequestParam Integer type)
@@ -90,7 +91,7 @@ public class MenuController {
         return Response.error(AppExceptionCodeMsg.DELETE_ERR_MSG);
     }
 
-    @ApiParam(value = "增加菜单")
+    @ApiOperation(value = "增加菜单")
     @PostMapping("")
     public Response<Boolean> insertMenu(@ApiParam(value = "请传入一个需要增加的菜单") @RequestBody Menu menu) {
         if (menuService.insertMenu(menu) != null) {
@@ -99,7 +100,7 @@ public class MenuController {
         return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
     }
 
-    @ApiParam(value = "修改菜单")
+    @ApiOperation(value = "修改菜单")
     @PutMapping("")
     public Response<Boolean> updateMenu(@ApiParam(value = "请传入一个需要修改的菜单") @RequestBody Menu menu) {
         if (menuService.updateMenu(menu) != null) {
