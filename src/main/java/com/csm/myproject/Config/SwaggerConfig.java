@@ -21,14 +21,14 @@ import java.util.ArrayList;
  */
 @EnableOpenApi
 @Configuration
-@Profile({"dev", "test"})
+//@Profile({"dev", "test"})
 public class SwaggerConfig {
     @Bean
     public Docket docket(Environment environment) {
         //设置需要配置swagger的项目环境
         Profiles profiles = Profiles.of("dev","test");
         //获取项目环境
-        boolean flag = environment.acceptsProfiles(profiles);
+       boolean flag = environment.acceptsProfiles(profiles);
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 //设置分组的名字，如果其他人也有分组，其他人就new一个docket
