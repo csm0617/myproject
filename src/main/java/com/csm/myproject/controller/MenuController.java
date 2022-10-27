@@ -5,8 +5,8 @@ import com.csm.myproject.mapper.FirMenuMapper;
 import com.csm.myproject.mapper.MenuMapper;
 import com.csm.myproject.service.IMenuService;
 import com.csm.myproject.vo.MenuItem;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,7 @@ import java.util.List;
  * @author csm
  * @since 2022-10-20
  */
-@Api("菜单管理")
+@Tag(name="菜单")
 @RestController
 @RequestMapping("/myproject/menus")
 public class MenuController {
