@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.Utils.Base64Util;
 import com.csm.myproject.Utils.FileToBytes;
+import com.csm.myproject.entity.Role;
 import com.csm.myproject.entity.User;
 import com.csm.myproject.entity.UserRole;
 import com.csm.myproject.mapper.RoleMapper;
@@ -23,6 +24,7 @@ import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,11 +59,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public Page<UserRole> getUserRoles(long userId,Integer pageNum,Integer pageSize) {
-        Page<UserRole> page = new Page<>(pageNum,pageSize);
+    public Page<Role> getUserRoles(long userId,Integer pageNum,Integer pageSize) {
+        Page<Role> page = new Page<>(pageNum,pageSize);
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserRole ::getUserId,userId);
-        userRoleMapper.selectPage(page,queryWrapper);
+        List<UserRole> userRoles = userRoleMapper.selectList(queryWrapper);
+        List<Long> roleIds = new ArrayList<>();
+        for (UserRole userRole : userRoles) {
+            Long roleId = userRole.getRoleId();
+            roleIds.add(roleId);
+        }
+        List<Role> roles = roleMapper.selectBatchIds(roleIds);
+        page.setRecords(roles);
+        page.setCurrent(pageNum);
+        page.setPages(pageSize);
+
         return page;
     }
 

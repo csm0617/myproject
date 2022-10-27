@@ -4,6 +4,7 @@ package com.csm.myproject.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.csm.myproject.entity.Role;
 import com.csm.myproject.entity.User;
 import com.csm.myproject.entity.UserRole;
 import com.csm.myproject.exception.AppException;
@@ -66,7 +67,7 @@ public class UserController {
                                                 @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
                                                 @ApiParam(value = "用户id") @RequestParam Long userId) {
 
-        Page<UserRole> page = userService.getUserRoles(userId, pageNum, pageSize);
+        Page<Role> page = userService.getUserRoles(userId, pageNum, pageSize);
 
         return Response.ok(page);
 

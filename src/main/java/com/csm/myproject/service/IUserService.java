@@ -2,6 +2,7 @@ package com.csm.myproject.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.csm.myproject.entity.Role;
 import com.csm.myproject.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.csm.myproject.entity.UserRole;
@@ -22,7 +23,7 @@ import java.util.List;
 @Repository
 public interface IUserService extends IService<User> {
       boolean deleteUserRer(long userId);
-      Page<UserRole> getUserRoles(long userId, Integer pageNumber, Integer pageSize);
+      Page<Role> getUserRoles(long userId, Integer pageNumber, Integer pageSize);
       User updateUser(User user);
       User insertUser(MultipartFile file, User user);
       User updateAvatar(MultipartFile file,Long userId);
