@@ -1,4 +1,5 @@
 package com.csm.myproject.controller;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +51,7 @@ public class UserController {
         List<UserData> userDataList = new ArrayList<>();
         for (User user : users) {
             UserData userData = new UserData();
-            BeanUtils.copyProperties(user,userData);
+            BeanUtils.copyProperties(user, userData);
             userDataList.add(userData);
         }
         page.setRecords(userDataList);
@@ -73,8 +76,8 @@ public class UserController {
     @ApiOperation(value = "通过用户id来查询该用户的角色")
     @GetMapping("/roles")
     public Response<Page<Role>> getUserRole(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
-                                                @ApiParam(value = "用户id") @RequestParam Long userId) {
+                                            @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
+                                            @ApiParam(value = "用户id") @RequestParam Long userId) {
 
         Page<Role> page = userService.getUserRoles(userId, pageNum, pageSize);
 
@@ -104,28 +107,45 @@ public class UserController {
         return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
 
+//    @ApiOperation(value = "新增用户")
+//    @PostMapping()
+//    public Response<Boolean> insertUser(@ApiParam(value = "传入用户") @RequestBody User user){
+//        if(!userService.findUserByName(user.getUsername())) {
+//            if (userMap.insert(user) > 0) {
+//                return Response.success("新增用户成功", true);
+//            }
+//            return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
+//        }else {
+//            throw new AppException(AppExceptionCodeMsg.USER_ALREADY_EXISTS_MSG);
+//        }
+//    }
+
+    /**
+     * 因为同时上传头像和json对象的时候的，
+     * content-type会比requestBody的优先级高，
+     * 导致user不能以json的形式，
+     * 所以把user的属性以@requestParam的形式传进去
+     */
     @ApiOperation(value = "新增用户")
     @PostMapping()
-    public Response<Boolean> insertUser(@ApiParam(value = "传入用户") @RequestBody User user){
-        if(!userService.findUserByName(user.getUsername())) {
-            if (userMap.insert(user) > 0) {
-                return Response.success("新增用户成功", true);
-            }
-            return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
+    public Response<Boolean> insertUser(@ApiParam(value = "上传用户头像") @RequestPart MultipartFile file,
+                                        @ApiParam(value = "用户名") @RequestParam String username,
+                                        @ApiParam(value = "密码") @RequestParam String pwd,
+                                        @ApiParam(value = "手机号码") @RequestParam(required = false) String phone,
+                                        @ApiParam(value = "生日") @RequestParam(required = false) LocalDate birth,
+                                        @ApiParam(value = "邮箱") @RequestParam(required = false) String email) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPwd(pwd);
+        user.setPhone(phone);
+        user.setEmail(email);
+        user.setBirth(birth);
+        if (userService.insertUser(file,user)){
+            return Response.success("成功添加用户",true);
         }else {
-            throw new AppException(AppExceptionCodeMsg.USER_ALREADY_EXISTS_MSG);
+            return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
         }
     }
-
-//    @ApiOperation(value = "新增用户")
-//    @PostMapping(headers = "content-type=multipart/form-data")
-//    public Response<Boolean> insertUser(@ApiParam(value = "上传用户头像") @RequestPart MultipartFile file,
-//                                        @ApiParam(value = "传入用户信息") @RequestPart User user) {
-//        if (userService.insertUser(file, user) != null) {
-//            return Response.success("成功上传", true);
-//        }
-//        return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
-//    }
 
     @ApiOperation(value = "通过用户id来修改用户头像")
     @PutMapping(value = "/avatar", headers = "content-type=multipart/form-data")

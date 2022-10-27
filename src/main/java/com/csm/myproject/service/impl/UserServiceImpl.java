@@ -8,6 +8,8 @@ import com.csm.myproject.Utils.FileToBytes;
 import com.csm.myproject.entity.Role;
 import com.csm.myproject.entity.User;
 import com.csm.myproject.entity.UserRole;
+import com.csm.myproject.exception.AppException;
+import com.csm.myproject.exception.AppExceptionCodeMsg;
 import com.csm.myproject.mapper.RoleMapper;
 import com.csm.myproject.mapper.UserMapper;
 import com.csm.myproject.mapper.UserRoleMapper;
@@ -85,24 +87,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return false;
     }
-    public User insertUser(MultipartFile file,User user) {
-        if (user!=null&&file!=null){
-            BASE64Encoder encoder = new BASE64Encoder();
-            try {
-
-                String firStr = encoder.encode(file.getBytes());
-                user.setAvatar(firStr);
-                String path = "F\\:" + user.getUsername() + System.currentTimeMillis() + ".png";
-                Base64Util.GenerateImage(user.getAvatar(), path);
-                File avatarFile = new File(path);
-                if (userMapper.insert(user)>0) {
-                    return user;
+    public boolean insertUser(MultipartFile file,User user) {
+        if (!findUserByName(user.getUsername())) {
+            if (file != null) {
+                BASE64Encoder encoder = new BASE64Encoder();
+                try {
+                    String firStr = encoder.encode(file.getBytes());
+                    user.setAvatar(firStr);
+                    if (userMapper.insert(user) > 0) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
+        }else {
+            throw new AppException(AppExceptionCodeMsg.USER_ALREADY_EXISTS_MSG);
         }
-        return null;
+        return false;
 }
 
     @Override

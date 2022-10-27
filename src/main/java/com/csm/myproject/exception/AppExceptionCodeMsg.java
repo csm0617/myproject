@@ -18,7 +18,7 @@ public enum AppExceptionCodeMsg {
     UPLOAD_AVATAR_ERR_MSG(10005,"修改失败"),
     USER_ALREADY_EXISTS_MSG(100006,"用户名重复"),
     ROLE_ALREADY_EXISTS_MSG(10007,"角色已存在！"),
-    MENU_ALREADY_EXISTS_MSG(10007,"菜单已存在！");
+    MENU_ALREADY_EXISTS_MSG(10008,"菜单已存在！");
 
     private int code ;
     private String message ;
