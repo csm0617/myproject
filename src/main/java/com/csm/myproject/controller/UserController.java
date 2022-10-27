@@ -98,21 +98,34 @@ public class UserController {
     @ApiOperation(value = "修改用户信息")
     @PutMapping
     public Response<Boolean> updateUser(@ApiParam(value = "请传入用户信息") @RequestBody User user) {
-        if (userService.updateUser(user) != null) {
+        if (userService.updateUser(user)) {
             return Response.success("修改用户成功", true);
         }
         return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
 
     @ApiOperation(value = "新增用户")
-    @PostMapping(headers = "content-type=multipart/form-data")
-    public Response<Boolean> insertUser(@ApiParam(value = "上传用户头像") @RequestPart("file") MultipartFile file,
-                                        @ApiParam(value = "传入用户信息") @RequestPart("json") User user) {
-        if (userService.insertUser(file, user) != null) {
-            return Response.success("成功上传", true);
+    @PostMapping()
+    public Response<Boolean> insertUser(@ApiParam(value = "传入用户") @RequestBody User user){
+        if(!userService.findUserByName(user.getUsername())) {
+            if (userMap.insert(user) > 0) {
+                return Response.success("新增用户成功", true);
+            }
+            return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
+        }else {
+            throw new AppException(AppExceptionCodeMsg.USER_ALREADY_EXISTS_MSG);
         }
-        return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
     }
+
+//    @ApiOperation(value = "新增用户")
+//    @PostMapping(headers = "content-type=multipart/form-data")
+//    public Response<Boolean> insertUser(@ApiParam(value = "上传用户头像") @RequestPart MultipartFile file,
+//                                        @ApiParam(value = "传入用户信息") @RequestPart User user) {
+//        if (userService.insertUser(file, user) != null) {
+//            return Response.success("成功上传", true);
+//        }
+//        return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
+//    }
 
     @ApiOperation(value = "通过用户id来修改用户头像")
     @PutMapping(value = "/avatar", headers = "content-type=multipart/form-data")

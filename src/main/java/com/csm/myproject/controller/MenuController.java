@@ -94,10 +94,12 @@ public class MenuController {
     @ApiOperation(value = "增加菜单")
     @PostMapping("")
     public Response<Boolean> insertMenu(@ApiParam(value = "请传入一个需要增加的菜单") @RequestBody Menu menu) {
-        if (menuService.insertMenu(menu) != null) {
+        if (menuService.insertMenu(menu)) {
             return Response.success("插入菜单成功", true);
         }
-        return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
+        else {
+            return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
+        }
     }
 
     @ApiOperation(value = "修改菜单")

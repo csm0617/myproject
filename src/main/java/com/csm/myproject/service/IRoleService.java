@@ -20,5 +20,5 @@ public interface IRoleService extends IService<Role> {
     List<UserRole> getUsers(Long roleId);
 
     void deleteRole(Long roleId);
-
+    boolean findRoleByName(String name);
 }

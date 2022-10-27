@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csm.myproject.entity.*;
+import com.csm.myproject.exception.AppException;
+import com.csm.myproject.exception.AppExceptionCodeMsg;
 import com.csm.myproject.mapper.*;
 import com.csm.myproject.result.menu.MenuData;
 import com.csm.myproject.service.IMenuService;
@@ -171,37 +173,57 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     }
 
     @Override
-    public Menu insertMenu(Menu menu) {
-        if(menu.getMenuType()==1){
-            menuMapper.insert(menu);
-            return menu;
+    public boolean insertMenu(Menu menu) {
+        if (!findMenuByNameAndType(menu)) {
+            if (menu.getMenuType() == 1) {
+                menuMapper.insert(menu);
+                return true;
+            }
+            else if (menu.getMenuType() == 2) {
+                FirMenu firMenu = new FirMenu();
+                firMenu.setMenuType(2);
+                BeanUtils.copyProperties(menu, firMenu);
+                firMenuMapper.insert(firMenu);
+                return true;
+            }
+            else if (menu.getMenuType() == 3) {
+                SecMenu secMenu = new SecMenu();
+                BeanUtils.copyProperties(menu, secMenu);
+                secMenu.setMenuType(3);
+                secMenuMapper.insert(secMenu);
+                return true;
+            }else {
+                return false;
+            }
         }
-        if (menu.getMenuType() == 2){
-            FirMenu firMenu = new FirMenu();
-            firMenu.setMenuType(2);
-            BeanUtils.copyProperties(menu,firMenu);
-            //赋值id可能会失败
-            //设置id自增；
-            // firMenu.setId(menu.getId());
-//            firMenu.setName(menu.getName());
-//            firMenu.setInfo(menu.getInfo());
-//            firMenu.setCreatTime(menu.getCreatTime());
-//            firMenu.setUpdateTime(menu.getUpdataTime());
-            firMenuMapper.insert(firMenu);
-            return menu;
+        throw new AppException(AppExceptionCodeMsg.MENU_ALREADY_EXISTS_MSG);
+    }
+
+    @Override
+    public boolean findMenuByNameAndType(Menu menu) {
+        Integer menuType = menu.getMenuType();
+        String name = menu.getName();
+        List<Menu> menus = menuMapper.selectList(new LambdaQueryWrapper<Menu>()
+                .eq(name != null, Menu::getName, name)
+                .eq(menuType != null, Menu::getMenuType, menuType));
+
+        List<FirMenu> firMenus = firMenuMapper.selectList(new LambdaQueryWrapper<FirMenu>()
+                .eq(name != null, FirMenu::getName, name)
+                .eq(menuType != null, FirMenu::getMenuType, menuType));
+
+        List<SecMenu> secMenus = secMenuMapper.selectList(new LambdaQueryWrapper<SecMenu>()
+                .eq(name != null, SecMenu::getName, name)
+                .eq(menuType != null, SecMenu::getMenuType, menuType));
+
+        if (menus!=null){
+            return true;
+        }else if (firMenus== null) {
+            return true;
+        }else if (secMenus!= null) {
+            return true;
+        } else {
+            return false;
         }
-        if (menu.getMenuType()==3){
-            SecMenu secMenu = new SecMenu();
-            BeanUtils.copyProperties(menu,secMenu);
-            secMenu.setMenuType(3);
-//            secMenu.setName(menu.getName());
-//            secMenu.setInfo(menu.getInfo());
-//            secMenu.setCreatTime(menu.getCreatTime());
-//            secMenu.setUpdateTime(menu.getCreatTime());
-            secMenuMapper.insert(secMenu);
-            return menu;
-        }
-        return null;
     }
 
     @Override
@@ -222,10 +244,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             if (firMenu != null) {
                 //使用 beanutils工具复制同一种结构
                 BeanUtils.copyProperties(menu, firMenu);
-//                firMenu.setName(menu.getName());
-//                firMenu.setInfo(menu.getInfo());
-//                firMenu.setCreatTime(menu.getCreatTime());
-//                firMenu.setUpdateTime(menu.getUpdataTime());
                 int update = firMenuMapper.update(firMenu, new LambdaQueryWrapper<FirMenu>()
                         .eq(menu.getId() != null, FirMenu::getId, menu.getId()));
                 if (update > 0) {
@@ -237,10 +255,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             SecMenu secMenu = secMenuMapper.selectById(menu.getId());
             if (secMenu != null) {
                 BeanUtils.copyProperties(menu,secMenu);
-//                secMenu.setName(menu.getName());
-//                secMenu.setInfo(menu.getInfo());
-//                secMenu.setCreatTime(menu.getCreatTime());
-//                secMenu.setUpdateTime(menu.getUpdataTime());
                 int update = secMenuMapper.update(secMenu, new LambdaQueryWrapper<SecMenu>()
                         .eq(menu.getId() != null, SecMenu::getId, menu.getId()));
                 if (update > 0) {

@@ -76,17 +76,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public User updateUser(User user) {
+    public boolean updateUser(User user) {
         if (userMapper.selectById(user.getId())!=null) {
-            User user1 = new User();
-            BeanUtils.copyProperties(user, user1);
-
-            int update = userMapper.update(user1, new LambdaQueryWrapper<User>().eq(user.getId() != null, User::getId, user.getId()));
+            int update = userMapper.update(user, new LambdaQueryWrapper<User>().eq(user.getId() != null, User::getId, user.getId()));
             if (update > 0) {
-                return user1;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     public User insertUser(MultipartFile file,User user) {
         if (user!=null&&file!=null){
@@ -130,5 +127,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         }
         return null;
+    }
+
+    @Override
+    public boolean findUserByName(String name) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(name != null, User::getUsername, name));
+        if (user!=null) {
+            return true;
+        }
+        return false;
     }
 }

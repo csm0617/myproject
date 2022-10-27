@@ -24,7 +24,8 @@ import java.util.List;
 public interface IUserService extends IService<User> {
       boolean deleteUserRer(long userId);
       Page<Role> getUserRoles(long userId, Integer pageNumber, Integer pageSize);
-      User updateUser(User user);
+      boolean updateUser(User user);
       User insertUser(MultipartFile file, User user);
       User updateAvatar(MultipartFile file,Long userId);
+      boolean findUserByName(String name);
 }

@@ -22,7 +22,8 @@ import java.util.List;
 public interface IMenuService extends IService<Menu> {
     List<MenuItem> showMenuListByRoleId(Long roleId);
     boolean deleteMenuById(Long menuId,Integer type);
-    Menu insertMenu(Menu menu);
+    boolean insertMenu(Menu menu);
+    boolean findMenuByNameAndType(Menu menu);
     Menu updateMenu(Menu menu);
 //    List<MenuItem> showMenuList();
     Page showMenuList(Integer pageNum,Integer pageSize);

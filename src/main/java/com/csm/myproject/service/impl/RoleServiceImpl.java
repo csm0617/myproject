@@ -51,4 +51,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         roleMenuMapper.delete(roleMenuQueryWrapper);
         roleMapper.deleteById(roleId);
     }
+
+    @Override
+    public boolean findRoleByName(String name) {
+        Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>().eq(name != null, Role::getName, name));
+        if (role !=null) {
+            return true;
+        }
+        return false;
+    }
 }
