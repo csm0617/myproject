@@ -22,7 +22,7 @@ mybatis-plus:
       #设置实体类表的统一前缀
       table-prefix: m_
       #配置类型别名
-  type-aliases-package: com.csm.myproject.entity
+  type-aliases-package: com.csm.menus.entity
 server:
   port: 8088
 
