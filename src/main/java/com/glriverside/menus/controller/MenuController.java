@@ -9,6 +9,7 @@ import com.glriverside.menus.mapper.MenuMapper;
 import com.glriverside.menus.response.Response;
 import com.glriverside.menus.service.IMenuService;
 import com.glriverside.menus.vo.MenuItem;
+import com.glriverside.menus.vo.ZeroMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -109,6 +110,11 @@ public class MenuController {
             return Response.success("修改菜单成功", true);
         }
         return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
+    }
+    @GetMapping("/allMenulist")
+    public Response<Menu> getAllMenusByRoleId(@ApiParam(value = "用户id") @RequestParam Long roleId){
+        List<ZeroMenu> allMenus = menuMapper.getAllMenus(roleId);
+        return Response.ok(allMenus);
     }
 
 }
