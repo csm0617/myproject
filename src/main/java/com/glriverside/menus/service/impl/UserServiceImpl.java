@@ -2,6 +2,7 @@ package com.glriverside.menus.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.glriverside.menus.result.role.RoleData;
 import com.glriverside.menus.utils.Base64Util;
 import com.glriverside.menus.entity.Role;
 import com.glriverside.menus.entity.User;
@@ -14,6 +15,7 @@ import com.glriverside.menus.mapper.UserRoleMapper;
 import com.glriverside.menus.service.IUserRoleService;
 import com.glriverside.menus.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,18 +57,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public Page<Role> getUserRoles(long userId, Integer pageNum, Integer pageSize) {
+    public Page<RoleData> getUserRoles(long userId, Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserRole::getUserId, userId);
         List<UserRole> userRoles = userRoleMapper.selectList(queryWrapper);
         List<Long> roleIds = new ArrayList<>();
+        ArrayList<RoleData> roleDataList = new ArrayList<>();
         for (UserRole userRole : userRoles) {
             Long roleId = userRole.getRoleId();
-            roleIds.add(roleId);
+            RoleData roleData = new RoleData();
+            Role role = roleMapper.selectById(roleId);
+            BeanUtils.copyProperties(role,roleData);
+            roleDataList.add(roleData);
         }
-        List<Role> roles = roleMapper.selectBatchIds(roleIds);
-        Page<Role> page = new Page<>(pageNum, pageSize);
-        page.setRecords(roles);
+        Page<RoleData> page = new Page<>(pageNum, pageSize);
+        page.setRecords(roleDataList);
 
         return page;
     }

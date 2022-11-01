@@ -37,9 +37,9 @@ public class RoleController {
 
 
     @ApiOperation(value = "分页展示所有的角色")
-    @GetMapping("/{pageNum}/{pageSize}")
-    public Response<Page<Role>> getRoles(@ApiParam(value = "页码默认为1") @PathVariable Integer pageNum,
-                                         @ApiParam(value = "每页显示数量默认的10") @PathVariable Integer pageSize) {
+    @GetMapping("/list")
+    public Response<Page<Role>> getRoles(@ApiParam(value = "页码默认为1") @RequestParam(required = false) Integer pageNum,
+                                         @ApiParam(value = "每页显示数量默认的10") @RequestParam(required = false) Integer pageSize) {
 
         Page<Role> page = new Page(pageNum, pageSize);
         roleMapper.selectPage(page, null);
@@ -71,10 +71,10 @@ public class RoleController {
 
     @ApiOperation(value = "新增或修角色")
     @PostMapping()
-    public Response<Boolean> insertRole(@ApiParam(value = "请传入一个需要增加的角色") @RequestBody Role role) {
+    public Response<Role> insertRole(@ApiParam(value = "请传入一个需要增加的角色") @RequestBody Role role) {
         if (!roleService.findRoleByName(role.getName())) {
             if (roleMapper.insert(role) > 0) {
-                return Response.success("新增色成功", true);
+                return Response.success("新增色成功", role);
             } else {
                 return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
             }
@@ -86,9 +86,9 @@ public class RoleController {
 
     @ApiOperation(value = "修改角色")
     @PutMapping
-    public Response<Boolean> updateRole(@ApiParam(value = "请传入一个需要修改的角色") @RequestBody Role role) {
+    public Response<Role> updateRole(@ApiParam(value = "请传入一个需要修改的角色") @RequestBody Role role) {
             if (roleMapper.update(role, new LambdaQueryWrapper<Role>().eq(Role::getId, role.getId())) > 0) {
-                return Response.success("修改角色成功", true);
+                return Response.success("修改角色成功", role);
             } else {
                 return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
             }

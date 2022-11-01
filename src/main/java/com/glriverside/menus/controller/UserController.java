@@ -8,6 +8,7 @@ import com.glriverside.menus.exception.AppException;
 import com.glriverside.menus.exception.AppExceptionCodeMsg;
 import com.glriverside.menus.mapper.UserMapper;
 import com.glriverside.menus.response.Response;
+import com.glriverside.menus.result.role.RoleData;
 import com.glriverside.menus.result.user.UserData;
 import com.glriverside.menus.service.IUserService;
 import io.swagger.annotations.Api;
@@ -74,11 +75,11 @@ public class UserController {
 
     @ApiOperation(value = "通过用户id来查询该用户的角色")
     @GetMapping("/roles")
-    public Response<Page<Role>> getUserRole(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
-                                            @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
-                                            @ApiParam(value = "用户id") @RequestParam Long userId) {
+    public Response<Page<RoleData>> getUserRole(@ApiParam(value = "第几页，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+                                                @ApiParam(value = "每页显示的数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize,
+                                                @ApiParam(value = "用户id") @RequestParam Long userId) {
 
-        Page<Role> page = userService.getUserRoles(userId, pageNum, pageSize);
+        Page<RoleData> page = userService.getUserRoles(userId, pageNum, pageSize);
 
         return Response.ok(page);
 
@@ -148,10 +149,11 @@ public class UserController {
 
     @ApiOperation(value = "通过用户id来修改用户头像")
     @PutMapping(value = "/avatar", headers = "content-type=multipart/form-data")
-    public Response<Boolean> updateAvatar(@ApiParam(value = "上传需要修改的用户头像") @RequestPart("file") MultipartFile file,
+    public Response<User> updateAvatar(@ApiParam(value = "上传需要修改的用户头像") @RequestPart("file") MultipartFile file,
                                           @ApiParam(value = "用户id") @RequestParam Long userId) {
-        if (userService.updateAvatar(file, userId) != null) {
-            return Response.success("成功修改用户头像", true);
+        User user = userService.updateAvatar(file, userId);
+        if (user!=null) {
+            return Response.success("成功修改用户头像", user);
         }
         return Response.error(AppExceptionCodeMsg.UPLOAD_AVATAR_ERR_MSG);
     }

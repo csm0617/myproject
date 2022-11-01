@@ -41,8 +41,8 @@ public class MenuController {
     @ApiOperation(value = "展开菜单列表")
     public Response<Menu> showMenuList(@ApiParam(value = "页码默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
                                        @ApiParam(value = "每页显示数量默认的10") @RequestParam(defaultValue = "10") Integer pageSize,
-                                       @ApiParam(value = "菜单id") @RequestParam(required = false) Long menuId,
-                                       @ApiParam(value = "菜单的类型") @RequestParam Integer type
+                                       @ApiParam(value = "菜单id，菜单类型为1时可不填表示展开一级菜单，（菜单类型为2，id为1）表示展开id为1的一级菜单下的二级菜单") @RequestParam(required = false) Long menuId,
+                                       @ApiParam(value = "菜单的类型（1，2，3）") @RequestParam Integer type
     ) {
         //数据校验
         if (!(type >= 1 && type <= 3)) {
@@ -94,9 +94,9 @@ public class MenuController {
 
     @ApiOperation(value = "增加菜单")
     @PostMapping("")
-    public Response<Boolean> insertMenu(@ApiParam(value = "请传入一个需要增加的菜单") @RequestBody Menu menu) {
+    public Response<Menu> insertMenu(@ApiParam(value = "请传入一个需要增加的菜单") @RequestBody Menu menu) {
         if (menuService.insertMenu(menu)) {
-            return Response.success("插入菜单成功", true);
+            return Response.success("插入菜单成功", menu);
         }
         else {
             return Response.error(AppExceptionCodeMsg.INSERT_ERR_MSG);
@@ -105,9 +105,9 @@ public class MenuController {
 
     @ApiOperation(value = "修改菜单")
     @PutMapping("")
-    public Response<Boolean> updateMenu(@ApiParam(value = "请传入一个需要修改的菜单") @RequestBody Menu menu) {
+    public Response<Menu> updateMenu(@ApiParam(value = "请传入一个需要修改的菜单") @RequestBody Menu menu) {
         if (menuService.updateMenu(menu) != null) {
-            return Response.success("修改菜单成功", true);
+            return Response.success("修改菜单成功", menu);
         }
         return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
