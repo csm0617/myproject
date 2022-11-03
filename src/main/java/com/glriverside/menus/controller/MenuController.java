@@ -111,10 +111,4 @@ public class MenuController {
         }
         return Response.error(AppExceptionCodeMsg.UPDATE_ERR_MSG);
     }
-    @GetMapping("/allMenulist")
-    public Response<Menu> getAllMenusByRoleId(@ApiParam(value = "用户id") @RequestParam Long roleId){
-        List<ZeroMenu> allMenus = menuMapper.getAllMenus(roleId);
-        return Response.ok(allMenus);
-    }
-
 }

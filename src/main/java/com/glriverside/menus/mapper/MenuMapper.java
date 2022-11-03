@@ -17,5 +17,5 @@ import java.util.List;
  */
 @Repository
 public interface MenuMapper extends BaseMapper<Menu> {
-    List<ZeroMenu> getAllMenus(Long RoleId);
+
 }
