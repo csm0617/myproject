@@ -1,4 +1,4 @@
 FROM openjdk:8-jdk-slim
 LABEL maintainer=csm
-COPY target/*.jar  /app.jar
-ENTRYPOINT ["java","-jar","app.jar"]
+COPY target/*.jar  /menu.jar
+ENTRYPOINT ["java","-jar","menu.jar"]
